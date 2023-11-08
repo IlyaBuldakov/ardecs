@@ -3,9 +3,9 @@ package org.buldakov.model.cache;
 public class CacheMetaDataEntry<PriorityType extends Comparable<PriorityType>>
         implements Comparable<CacheMetaDataEntry<PriorityType>> {
 
-    String key;
+    private final String key;
 
-    PriorityType priority;
+    private PriorityType priority;
 
     public CacheMetaDataEntry(String key, PriorityType priority) {
         this.key = key;
@@ -29,10 +29,6 @@ public class CacheMetaDataEntry<PriorityType extends Comparable<PriorityType>>
 
     public String getKey() {
         return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public PriorityType getPriority() {
