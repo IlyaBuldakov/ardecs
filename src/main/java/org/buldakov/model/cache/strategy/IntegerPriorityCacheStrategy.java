@@ -7,12 +7,22 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.Optional;
 
+/**
+ * Реализация стратегии с числовым приоритетом {@link Integer}.
+ * Базово реализует LFU стратегию.
+ */
 public class IntegerPriorityCacheStrategy extends AbstractCacheStrategy<Integer> {
 
     public IntegerPriorityCacheStrategy(int initialCapacity) {
         super(initialCapacity);
     }
 
+    /**
+     * Конструктор с {@link Comparator} для переопределения приоритета.
+     *
+     * @param initialCapacity Вместимость кэш-хранилища (проецируется на приоритетную очередь)
+     * @param comparator {@link Comparator Компаратор}.
+     */
     protected IntegerPriorityCacheStrategy(int initialCapacity, Comparator<CacheMetaDataEntry<Integer>> comparator) {
         super(initialCapacity, comparator);
     }

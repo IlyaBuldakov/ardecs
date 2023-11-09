@@ -9,14 +9,30 @@ import org.buldakov.model.cache.strategy.MfuCacheStrategy;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Билдер для {@link CacheStorage}.
+ * Позволяет создать его объект.
+ */
 public class CacheStorageBuilder {
 
+    /**
+     * L1 кэш-хранилище
+     */
     private HashMap<String, Object> keyValueStorage;
 
+    /**
+     * Вместимость L1 кэш-хранилища.
+     */
     private int capacity;
 
+    /**
+     * Стратегия вытеснения кэш-элементов.
+     */
     private AbstractCacheStrategy<?> cacheStrategy;
 
+    /**
+     * Переключатель "включен ли L2 кэш".
+     */
     private boolean isL2CacheEnabled;
 
     public CacheStorageBuilder() {

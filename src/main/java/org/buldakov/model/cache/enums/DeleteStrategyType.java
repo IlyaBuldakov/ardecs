@@ -1,6 +1,21 @@
 package org.buldakov.model.cache.enums;
 
+/**
+ * Перечисление стратегий вытеснения данных из кэша.
+ */
 public enum DeleteStrategyType {
+    /**
+     * Least Frequently Used.
+     */
+    LFU,
 
-    LFU, MFU, LRU
+    /**
+     * Most Frequently Used.
+     */
+    MFU,
+
+    /**
+     * Last Recently Used.
+     */
+    LRU
 }

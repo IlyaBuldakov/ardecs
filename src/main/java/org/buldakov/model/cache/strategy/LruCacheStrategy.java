@@ -8,6 +8,9 @@ import java.math.BigInteger;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * Реализация стратегии LRU с временным приоритетом {@link Instant}.
+ */
 public class LruCacheStrategy extends AbstractCacheStrategy<Instant> {
 
     public LruCacheStrategy(int initialCapacity) {

@@ -14,6 +14,12 @@ public class Application {
         cacheTest(strategy);
     }
 
+    /**
+     * Метод получения стратегии из входных параметров приложения.
+     *
+     * @param args Входные параметры.
+     * @return Стратегия.
+     */
     private static DeleteStrategyType parseStrategy(String[] args) {
         DeleteStrategyType result = DeleteStrategyType.LFU;
         if (args.length == 1) {
@@ -28,6 +34,9 @@ public class Application {
         return result;
     }
 
+    /**
+     * Метод для демонстрации работы кэш-хранилища.
+     */
     private static void cacheTest(DeleteStrategyType deleteStrategy) throws IOException, ClassNotFoundException {
         CacheStorageBuilder builder = new CacheStorageBuilder();
         CacheStorage storage = builder

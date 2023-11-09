@@ -1,10 +1,21 @@
 package org.buldakov.model.cache;
 
+/**
+ * Класс-контейнер мета-данных кэш-элемента.
+ * @param <PriorityType> Тип приоритета, исходя из которого
+ *                      кэш-элементы будут сравниваться в {@link java.util.PriorityQueue приоритетной очереди}.
+ */
 public class CacheMetaDataEntry<PriorityType extends Comparable<PriorityType>>
         implements Comparable<CacheMetaDataEntry<PriorityType>> {
 
+    /**
+     * Ключ кэша.
+     */
     private final String key;
 
+    /**
+     * Приоритет кэша.
+     */
     private PriorityType priority;
 
     public CacheMetaDataEntry(String key, PriorityType priority) {
@@ -44,6 +55,9 @@ public class CacheMetaDataEntry<PriorityType extends Comparable<PriorityType>>
         return this.key;
     }
 
+    /**
+     * Метод сравнения контейнеров мета-даных кэш-элемента по их приоритету.
+     */
     @Override
     public int compareTo(CacheMetaDataEntry<PriorityType> o) {
        return this.priority.compareTo(o.getPriority());
