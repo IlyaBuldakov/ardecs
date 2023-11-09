@@ -6,6 +6,7 @@ import org.buldakov.model.cache.filesystem.L2CacheResolver;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -13,8 +14,11 @@ import java.util.List;
  */
 public class LruCacheStrategy extends AbstractCacheStrategy<Instant> {
 
+    private static final Comparator<CacheMetaDataEntry<Instant>> LRU_COMPARATOR
+            = (entry1, entry2) -> -(entry1.getPriority().compareTo(entry2.getPriority()));
+
     public LruCacheStrategy(int initialCapacity) {
-        super(initialCapacity);
+        super(initialCapacity, LRU_COMPARATOR);
     }
 
     @Override
@@ -31,7 +35,7 @@ public class LruCacheStrategy extends AbstractCacheStrategy<Instant> {
     }
 
     @Override
-    protected void resolveL2Cache(CacheMetaDataEntry<Instant> entry, Object cacheValue) throws IOException {
+    protected boolean resolvePriorityByAvg(CacheMetaDataEntry<Instant> entry, Object cacheValue) throws IOException {
         if (this.l2CacheResolver.isPresent()) {
             BigInteger sum = BigInteger.ZERO;
             List<Long> listOfMillis = this.cachePriorityQueue.stream().map((elem) -> elem.getPriority().toEpochMilli()).toList();
@@ -42,8 +46,10 @@ public class LruCacheStrategy extends AbstractCacheStrategy<Instant> {
             if (entry.getPriority().toEpochMilli() >= avg.longValue()) {
                 L2CacheResolver l2CacheResolver = this.l2CacheResolver.get();
                 l2CacheResolver.writeData(entry.getKey(), cacheValue);
+                return true;
             }
         }
+        return false;
     }
 
     @Override

@@ -43,15 +43,17 @@ public class IntegerPriorityCacheStrategy extends AbstractCacheStrategy<Integer>
     }
 
     @Override
-    protected void resolveL2Cache(CacheMetaDataEntry<Integer> entry, Object cacheValue) throws IOException {
+    protected boolean resolvePriorityByAvg(CacheMetaDataEntry<Integer> entry, Object cacheValue) throws IOException {
         if (this.l2CacheResolver.isPresent()) {
             Optional<Integer> sum = this.cachePriorityQueue.stream().map(CacheMetaDataEntry::getPriority).reduce(Integer::sum);
             int avg = sum.map(integer -> integer / this.cachePriorityQueue.size()).orElse(0);
             if (entry.getPriority() >= avg) {
                 L2CacheResolver l2CacheResolver = this.l2CacheResolver.get();
                 l2CacheResolver.writeData(entry.getKey(), cacheValue);
+                return true;
             }
         }
+        return false;
     }
 
     @Override

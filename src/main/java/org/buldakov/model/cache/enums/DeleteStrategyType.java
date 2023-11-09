@@ -15,7 +15,7 @@ public enum DeleteStrategyType {
     MFU,
 
     /**
-     * Last Recently Used.
+     * Least Recently Used.
      */
     LRU
 }

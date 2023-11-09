@@ -121,7 +121,7 @@ public abstract class AbstractCacheStrategy<PriorityType extends Comparable<Prio
                         if (keyValueSplit.length == 2) this.addPriorityEntry(keyValueSplit[0]);
                     }
                 });
-        System.out.println("L2 Cache log: в приоритетную очередь кэша были добавлены элемент. Хранилище: : " + this.cachePriorityQueue);
+        System.out.println("L2 Cache log: в приоритетную очередь кэша были добавлены элементы. Хранилище: " + this.cachePriorityQueue);
     }
 
     /**
@@ -169,36 +169,37 @@ public abstract class AbstractCacheStrategy<PriorityType extends Comparable<Prio
     public abstract void addPriorityEntry(String cacheKey);
 
     /**
-     * Метод, который добавляет ключ кэша, номинируемого на добавление в
-     * L2 кэш в множество ключей кэша.
+     * Метод, который добавляет ключ кэша в множество ключей L2 кэша,
+     * если он проходит проверку среднего значения
+     * (см. {@link AbstractCacheStrategy#resolvePriorityByAvg(CacheMetaDataEntry, Object)}).
      *
-     * Затем передаёт данные в метод обработки среднего значения.
-     *
-     * TODO: [FIX] Добавление в множество происходит до того, как произойдет проверка среднего значения. Исправить.
-     *
-     * @param entry Entry с мета-данными кэша.
+     * @param entry      Entry с мета-данными кэша.
      * @param cacheValue Значение кэша для сохранения в L2 кэш-файл.
-     * @throws IOException Exception.
+     * @throws IOException            Exception.
      * @throws ClassNotFoundException Exception.
      */
     protected void resolveInputDataToL2Cache(CacheMetaDataEntry<PriorityType> entry, Object cacheValue)
             throws IOException, ClassNotFoundException {
         String cacheKey = entry.getKey();
         if (!this.l2cacheKeysSet.contains(cacheKey)) {
-            this.l2cacheKeysSet.add(entry.getKey());
-            this.resolveL2Cache(entry, cacheValue);
+            if (this.resolvePriorityByAvg(entry, cacheValue)) {
+                this.l2cacheKeysSet.add(entry.getKey());
+            }
         }
     }
 
     /**
      * Метод проверки среднего значения для решения - заносить кэш в L2 или нет.
+     * Если элемент >= среднего значения приоритета в очереди - заносим его в кэш.
      *
-     * @param entry Entry с мета-данными кэша.
+     * @param entry      Entry с мета-данными кэша.
      * @param cacheValue Значение кэша.
-     * @throws IOException Exception.
+     * @return True/false. True - если приоритет {@link CacheMetaDataEntry} на входе больше
+     * среднего значения в приоритетной очереди.
+     * @throws IOException            Exception.
      * @throws ClassNotFoundException Exception.
      */
-    protected abstract void resolveL2Cache(CacheMetaDataEntry<PriorityType> entry, Object cacheValue)
+    protected abstract boolean resolvePriorityByAvg(CacheMetaDataEntry<PriorityType> entry, Object cacheValue)
             throws IOException, ClassNotFoundException;
 
     /**

@@ -57,6 +57,7 @@ public class CacheStorage {
                     }
                 });
             }
+            System.out.println("L2 to L1 fetch: L1 хранилище пополнено, состояние: " + this.keyValueStorage);
         }
     }
 
@@ -66,19 +67,20 @@ public class CacheStorage {
      * исходя из стратегии если их некуда записать.
      *
      * @param cacheKey Ключ кэша.
-     * @param value Значение кэша.
+     * @param value    Значение кэша.
      */
     public void addData(String cacheKey, Object value) {
         if (this.keyValueStorage.size() == capacity) {
-            System.out.println("Cache log: попытка добавить элемент " + cacheKey + ". Хранилище переполнено. Хранилище: " + this.keyValueStorage);
-            this.keyValueStorage.remove(this.cacheStrategy.removeEntry().getKey());
-            System.out.println("Cache log: элемент удален. Хранилище: " + this.keyValueStorage);
+            System.out.println("Cache log: попытка добавить элемент " + cacheKey + ". Хранилище переполнено: " + this.keyValueStorage);
+            String cacheKeyToDelete = this.cacheStrategy.removeEntry().getKey();
+            this.keyValueStorage.remove(cacheKeyToDelete);
+            System.out.println("Cache log: элемент " + cacheKeyToDelete + " удален. Хранилище: " + this.keyValueStorage);
         }
         this.keyValueStorage.put(cacheKey, value);
         if (!this.cacheStrategy.contains(cacheKey)) {
             this.cacheStrategy.addPriorityEntry(cacheKey);
         }
-        System.out.println("Cache log: добавлен новый элемент. Хранилище: " + this.keyValueStorage);
+        System.out.println("Cache log: добавлен новый элемент " + cacheKey + ". Хранилище: " + this.keyValueStorage);
     }
 
     /**
@@ -87,7 +89,7 @@ public class CacheStorage {
      *
      * @param cacheKey Ключ кэша.
      * @return Данные по ключу кэша.
-     * @throws IOException Exception.
+     * @throws IOException            Exception.
      * @throws ClassNotFoundException Exception.
      */
     public Object getData(String cacheKey) throws IOException, ClassNotFoundException {
