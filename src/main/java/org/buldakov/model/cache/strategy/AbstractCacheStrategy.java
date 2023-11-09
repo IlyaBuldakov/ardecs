@@ -18,11 +18,15 @@ public abstract class AbstractCacheStrategy<PriorityType extends Comparable<Prio
 
     protected Optional<L2CacheResolver> l2CacheResolver = Optional.empty();
 
-    protected AbstractCacheStrategy() {
+    private final int initialCapacity;
+
+    protected AbstractCacheStrategy(int initialCapacity) {
+        this.initialCapacity = initialCapacity;
         this.cachePriorityQueue = new PriorityQueue<>();
     }
 
-    protected AbstractCacheStrategy(Comparator<CacheMetaDataEntry<PriorityType>> comparator) {
+    protected AbstractCacheStrategy(int initialCapacity, Comparator<CacheMetaDataEntry<PriorityType>> comparator) {
+        this.initialCapacity = initialCapacity;
         this.cachePriorityQueue = new PriorityQueue<>(comparator);
     }
 
@@ -34,7 +38,7 @@ public abstract class AbstractCacheStrategy<PriorityType extends Comparable<Prio
         this.initL2CacheKeysSet();
         String[] l2cacheData = this.getL2Cache();
         if (l2cacheData.length != 0) {
-            this.mergeL2AndL1Cache(l2cacheData);
+            this.fillPriorityQueueFromL2(l2cacheData);
             return l2cacheData;
         }
         return new String[]{};
@@ -50,14 +54,16 @@ public abstract class AbstractCacheStrategy<PriorityType extends Comparable<Prio
         return new String[]{};
     }
 
-    private void mergeL2AndL1Cache(String[] l2cacheData) {
+    private void fillPriorityQueueFromL2(String[] l2cacheData) {
         Arrays.stream(l2cacheData)
                 .forEach((keyValueString)
                         -> {
-                    String[] keyValueSplit = keyValueString.split(":");
-                    if (keyValueSplit.length == 2) this.addPriorityEntry(keyValueSplit[0]);
+                    if (this.cachePriorityQueue.size() != this.initialCapacity) {
+                        String[] keyValueSplit = keyValueString.split(":");
+                        if (keyValueSplit.length == 2) this.addPriorityEntry(keyValueSplit[0]);
+                    }
                 });
-        System.out.println("L2 Cache log: в L1 кэш были добавлены элементы из L2: " + this.cachePriorityQueue);
+        System.out.println("L2 Cache log: в приоритетную очередь кэша были добавлены элемент. Хранилище: : " + this.cachePriorityQueue);
     }
 
     public CacheMetaDataEntry<PriorityType> removeEntry() {
@@ -74,6 +80,8 @@ public abstract class AbstractCacheStrategy<PriorityType extends Comparable<Prio
     public void clear() {
         this.cachePriorityQueue.clear();
     }
+
+    public abstract boolean contains(String cacheKey);
 
     public abstract void addPriorityEntry(String key);
 

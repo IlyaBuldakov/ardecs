@@ -9,7 +9,7 @@ public class MfuCacheStrategy extends IntegerPriorityCacheStrategy {
     private static final Comparator<CacheMetaDataEntry<Integer>> MFU_COMPARATOR
             = (entry1, entry2) -> -(entry1.getPriority().compareTo(entry2.getPriority()));
 
-    public MfuCacheStrategy() {
-        super(MFU_COMPARATOR);
+    public MfuCacheStrategy(int initialCapacity) {
+        super(initialCapacity, MFU_COMPARATOR);
     }
 }
